@@ -18,7 +18,6 @@ public class RandomForest {
 //		double [][]DataSet2 = readerFileTxt(filepath2, feature2, 2);
 		double []accuracy_1 = crossValid(DataSet1, feature1);
 //		double []accuracy_2 = crossValid(DataSet2, feature2);
-		
 		double means_1 = Means(accuracy_1);
 //		double means_2 = Means(accuracy_2);
 		double standard_1 = standardDev(accuracy_1, means_1);
@@ -31,7 +30,6 @@ public class RandomForest {
 //		System.out.println(means_2);
 		System.out.println(standard_1);
 //		System.out.println(standard_2);
-		
 	}
 	
 	private static double standardDev(double[] accuracy, double means) {
@@ -42,10 +40,8 @@ public class RandomForest {
 		{
 			standard = standard + (accuracy[i]-means)*(accuracy[i]-means)/(double)len;
 		}
-		
 		return Math.sqrt(standard);
 	}
-
 	private static double Means(double[] accuracy) {
 		// TODO Auto-generated method stub
 		int len = accuracy.length;
