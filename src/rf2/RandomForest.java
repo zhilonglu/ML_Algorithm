@@ -104,7 +104,7 @@ class RandomDecisionTree extends Classifier {
     }
     @Override
     public void train(boolean[] isCategory, double[][] features, double[] labels) {
-        _isClassification = isCategory[isCategory.length - 1];
+        _isClassification = false;
         _features = features;
         _isCategory = isCategory;
         _labels = labels;
@@ -116,63 +116,7 @@ class RandomDecisionTree extends Classifier {
         for (int i = 0; i < attr_index.length; ++i) {
             attr_index[i] = i;
         }
-        // 处理缺失属性
-        _defaults = kill_missing_data();
         root = build_decision_tree(set, attr_index);
-    }
-    private double[] kill_missing_data() {
-        int num = _isCategory.length - 1;
-        double[] defaults = new double[num];
-        for (int i = 0; i < defaults.length; ++i) {
-            if (_isCategory[i]) {
-                // 离散属性取最多的值
-                HashMap<Double, Integer> counter = new HashMap<Double, Integer>();
-                for (int j = 0; j < _features.length; ++j) {
-                    double feature = _features[j][i];
-                    if (!Double.isNaN(feature)) {
-                        if (counter.get(feature) == null) {
-                            counter.put(feature, 1);
-                        } else {
-                            int count = counter.get(feature) + 1;
-                            counter.put(feature, count);
-                        }
-                    }
-                }
-                int max_time = 0;
-                double value = 0;
-                Iterator<Double> iterator = counter.keySet().iterator();
-                while (iterator.hasNext()) {
-                    double key = iterator.next();
-                    int count = counter.get(key);
-                    if (count > max_time) {
-                        max_time = count;
-                        value = key;
-                    }
-                }
-                defaults[i] = value;
-            } else {
-                // 连续属性取平均值
-                int count = 0;
-                double total = 0;
-                for (int j = 0; j < _features.length; ++j) {
-                    if (!Double.isNaN(_features[j][i])) {
-                        count++;
-                        total += _features[j][i];
-                    }
-                }
-                defaults[i] = total / count;
-            }
-        }
-
-        // 代换
-        for (int i = 0; i < _features.length; ++i) {
-            for (int j = 0; j < defaults.length; ++j) {
-                if (Double.isNaN(_features[i][j])) {
-                    _features[i][j] = defaults[j];
-                }
-            }
-        }
-        return defaults;
     }
     @Override
     public double predict(double[] features) {
@@ -231,6 +175,7 @@ class RandomDecisionTree extends Classifier {
             node.label = most_label(set);
         } else {
             node.label = mean_value(set);
+//            node.label = TH_mean_value(set);
         }
         if (node.attr_index == null || node.attr_index.length == 0) {
             return node;
@@ -296,6 +241,14 @@ class RandomDecisionTree extends Classifier {
             temp += _labels[index];
         }
         return temp / set.length;
+    }
+ // 给定样本的标签平均值
+    private double TH_mean_value(int[] set) {
+        double temp = 0;
+        for (int index : set) {
+            temp += 1/_labels[index];
+        }
+        return set.length/temp;
     }
     private SplitData attribute_selection(TreeNode node) {
         SplitData result = new SplitData();
@@ -475,10 +428,13 @@ class RandomDecisionTree extends Classifier {
     }
     private double mse(int[] set) {
         double mean = mean_value(set);
+//        double mean = TH_mean_value(set);
         double temp = 0;
         for (int index : set) {
-            double t = _labels[index] - mean;
-            temp += t * t;
+//            double t = _labels[index] - mean;
+//            temp += t * t;
+            double t = Math.abs(_labels[index] - mean)/_labels[index];
+            temp += t;
         }
         return temp / set.length;
     }
