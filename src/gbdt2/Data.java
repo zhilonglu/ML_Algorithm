@@ -11,7 +11,7 @@ public class Data {
 	}
 
 	public Data() {
-		String dataPath="D://javajavajava//dbdt//src//script//data//adult.data.csv";
+		String dataPath="C:\\Users\\NLSDE\\Desktop\\data.csv";
 		Scanner in;
 		try {
 			in = new Scanner(new File(dataPath));

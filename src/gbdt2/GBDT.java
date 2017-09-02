@@ -15,7 +15,7 @@ public class GBDT {
 	private ArrayList<ArrayList<Double>> F=new ArrayList<ArrayList<Double>>();
 	private ArrayList<ArrayList<Double>> residual=new ArrayList<ArrayList<Double>>();
 	private ArrayList<ArrayList<String>> trainData=new ArrayList<ArrayList<String>>();
-	private ArrayList<Integer> labelTrainData=new ArrayList<Integer>();
+	private ArrayList<Double> labelTrainData=new ArrayList<Double>();
 	private int K;
 	private Boolean isDigit[];
 	private int dim;
@@ -176,10 +176,7 @@ public class GBDT {
 			if(!flag) continue;
 			if(datas.get(i).get(this.dim).trim().equals("?")) continue;
 			trainData.add(tmp);
-			if(datas.get(i).get(this.dim).trim().equals("<=50K")) 
-				labelTrainData.add(-1);
-			else
-				labelTrainData.add(1);
+			labelTrainData.add(Double.valueOf(datas.get(i).get(this.dim)));
 			
 		}
 		this.n=this.labelTrainData.size();
@@ -198,14 +195,11 @@ public class GBDT {
 			this.F.add(arrTmp);
 			this.residual.add(arrTmp);
 		}
-		
-							
 	}
 	
 	public static void main(String[] args) {
 		GBDT dGbdt=new GBDT();
 		dGbdt.getData();
 		System.err.println(dGbdt.n);
-		
 	}
 }
